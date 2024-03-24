@@ -652,7 +652,7 @@ Get_Target_C_Types (const char *Triple, const char *CPU, const char *ABI,
   if (Info == nullptr)
     return;
 
-  Result->PointerSize = Info->getPointerWidth(LangAS::Default);
+  Result->PointerSize = Info->getPointerWidth((unsigned) LangAS::Default);
   Result->CharSize = Info->getCharWidth();
   Result->WCharTSize = Info->getWCharWidth();
   Result->ShortSize = Info->getShortWidth();
@@ -718,7 +718,7 @@ LLVM_Optimize_Module (Module *M, TargetMachine *TM, int CodeOptLevel,
                       char **ErrorMessage) {
   // This code is derived from EmitAssemblyWithNewPassManager in clang
 
-  std::optional<PGOOptions> PGOOpt;
+  Optional<PGOOptions> PGOOpt;
   PipelineTuningOptions PTO;
   PassInstrumentationCallbacks PIC;
   Triple TargetTriple (M->getTargetTriple ());
@@ -1070,7 +1070,8 @@ extern "C"
 void
 Insert_At_Block_End (Instruction *I, BasicBlock *BB, Instruction *From)
 {
-  I->insertInto (BB, BB->end());
+  BB->getInstList().insert(BB->end(), I);
+  //I->insertInto (BB, BB->end());
   I->setDebugLoc (From->getDebugLoc ());
 }
 
@@ -1261,12 +1262,17 @@ Get_Features (const char *TargetTriple, const char *Arch, const char *CPU)
     auto const ArchSplit = StringRef(ArchLowerCase).split("+");
     auto const ArchInfo = AArch64::parseArch(ArchSplit.first);
 
-    if (ArchInfo == AArch64::INVALID) {
+    if (ArchInfo == AArch64::ArchKind::INVALID) {
       errs() << "warning: ignoring unsupported -march value " << Arch << "\n";
       return nullptr;
     }
+    
+    if (!getArchFeatures(ArchInfo, Features)) {
+      errs() << "error: could not get arch features for -march value " << Arch << "\n";
+      return nullptr;
+	}
 
-    Features.push_back(ArchInfo.ArchFeature);
+    //Features.push_back(ArchInfo.ArchFeature);
 
     // Now process the user-specified additional features, if any.
     if (!ArchSplit.second.empty()) {

@@ -36,7 +36,8 @@ project Gnat_LLVM is
       --  Force -static-libgcc via Required_Switches so that gprbuild does
       --  not override it.
       for Required_Switches use ("-static-libgcc", "-no-pie");
-      for Switches ("Ada") use ("-static-libstdc++", "-lclangBasic");
+      --for Switches ("Ada") use ("-static-libstdc++", "-lclangBasic");
+      for Switches ("Ada") use ("-stdlib=libc++", "-static-libstdc++", "-l:libc++abi.a", "-lclangBasic");
    end Linker;
 
    package CodePeer is
