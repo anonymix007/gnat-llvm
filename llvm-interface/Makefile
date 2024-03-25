@@ -212,7 +212,7 @@ include $(GNAT_SRC)/Makefile.rtl
 
 gnatlib: build
 	$(RMDIR) $(RTS)
-	$(MAKE) CFLAGS="$(CFLAGS)" EXTRALIBFLAGS="$(EXTRALIBFLAGS)" quicklib
+	$(MAKE) CFLAGS="$(CFLAGS) -I$(GNAT_SRC)" EXTRALIBFLAGS="$(EXTRALIBFLAGS)" quicklib
 
 gnatlib-automated: build-opt
 	$(RMDIR) $(RTS)
