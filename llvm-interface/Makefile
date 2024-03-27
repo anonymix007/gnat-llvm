@@ -175,7 +175,7 @@ clean:
 
 # Full runtime
 
-target=$(shell gcc -dumpmachine)
+target=$(shell clang -dumpmachine $(CFLAGS))
 
 target_list=$(filter-out gnu,$(subst -, ,$(target)))
 target_cpu=$(word 1,$(target_list))
@@ -187,6 +187,9 @@ else
   target_vendor=$(word 2,$(target_list))
   target_os=$(word 3,$(target_list))
 endif
+
+$(info Target OS - $(target_os))
+$(info Target CPU - $(target_cpu))
 
 RTS=$(pwd)/lib/rts-native
 RTSDIR=$(RTS)/adainclude
